@@ -1,0 +1,3 @@
+C:/Users/elias/CLionProjects/CA1-IkerArza/cmake-build-debug/CMakeFiles/CA1_IkerArza.dir
+C:/Users/elias/CLionProjects/CA1-IkerArza/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/elias/CLionProjects/CA1-IkerArza/cmake-build-debug/CMakeFiles/rebuild_cache.dir
