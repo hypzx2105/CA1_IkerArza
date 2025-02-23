@@ -63,6 +63,10 @@ void loadData(const string &filename, vector<Cars> &cars) {
 }
 
 
+//Stage 3:
+///1.Write a function that will accept the vector of structs, iterate through the elements, and display the elements in a neatly formatted fashion.
+
+
 void displayCars(const vector<Cars> &cars) {
     cout << left << setw(20) << "ID"
          << setw(15) << "Brand"
@@ -74,7 +78,7 @@ void displayCars(const vector<Cars> &cars) {
     cout << "--------------------------------------------------------------------------------------" << endl;
 
 
-    for (size_t i = 0; i < cars.size(); i++) {
+    for (int i = 0; i < cars.size(); i++) {
         cout << left << setw(20) << cars[i].id
              << setw(15) << cars[i].brand
              << setw(15) << cars[i].model
@@ -86,11 +90,61 @@ void displayCars(const vector<Cars> &cars) {
 }
 
 
+///  2.Write a function that searches a vector of structs for a specific field value, returning the index if found or -1 otherwise. Display the struct's contents if found, or a 'not found' message.
+
+
+int searchCarByBrand(const vector<Cars> &cars, const string &brand) {
+
+    for (int i = 0; i < cars.size(); i++) {
+        if (cars[i].brand == brand) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void displaySearchResult(const vector<Cars> &cars, int index) {
+    if (index != -1) {
+        cout << "Car Found:\n";
+        cout << left << setw(20) << "ID"
+             << setw(15) << "Brand"
+             << setw(15) << "Model"
+             << setw(6)  << "Year"
+             << setw(12) << "Price"
+             << setw(12) << "Horsepower"
+             << setw(12) << "Engine Size" << endl;
+        cout << "--------------------------------------------------------------------------------------" << endl;
+        cout << left << setw(20) << cars[index].id
+             << setw(15) << cars[index].brand
+             << setw(15) << cars[index].model
+             << setw(6)  << cars[index].year
+             << setw(12) << cars[index].price
+             << setw(12) << cars[index].horsePower
+             << setw(12) << cars[index].engineSize << endl;
+    } else {
+        cout << "Car not found." << endl;
+    }
+}
+
+
+
+
+
 int main() {
     vector<Cars> cars;
 
+//1
     loadData("Cars_c++.csv", cars);
-    displayCars(cars);
+    //displayCars(cars);
+
+//2.
+    string searchBrand;
+    cout << "Enter brand to search: ";
+    cin >> searchBrand;
+
+    int index = searchCarByBrand(cars, searchBrand);
+
+    displaySearchResult(cars, index);
 
     return 0;
 }
