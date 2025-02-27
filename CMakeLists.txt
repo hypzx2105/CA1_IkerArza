@@ -3,4 +3,5 @@ project(CA1_IkerArza)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(CA1_IkerArza main.cpp)
+add_executable(CA1_IkerArza main.cpp
+        CardGame.h)

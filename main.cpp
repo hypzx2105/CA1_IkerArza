@@ -3,6 +3,8 @@
 #include <vector>
 #include <fstream>
 #include <iomanip>
+#include <unordered_map>
+
 
 using namespace std;
 
@@ -126,25 +128,188 @@ void displaySearchResult(const vector<Cars> &cars, int index) {
     }
 }
 
+///3.Write a function that will accept the vector of structs, iterate through the data loaded in stage 2 and accumulate a count of the number of rows that are a match for each of the unique values in a chosen column. For example, if you chose movie data then this function could return the number of movies of each genre (comedy, thriller, drama, etc.). This function should return a map containing all information.
+
+
+unordered_map<string, int> countByBrand(const vector<Cars> &cars) {
+    unordered_map<string, int> brandCount;
+
+
+    for (size_t i = 0; i < cars.size(); i++) {
+        brandCount[cars[i].brand]++;
+    }
+
+    return brandCount;
+}
+
+void displayBrandCount(const unordered_map<string, int> &brandCount) {
+    cout << "\n[Car Count by Brand]\n";
+    cout << left << setw(15) << "Brand" << setw(10) << "Count" << endl;
+    cout << "-----------------------------\n";
+
+
+    vector<pair<string, int>> brandVector(brandCount.begin(), brandCount.end());
+
+    for (size_t i = 0; i < brandVector.size(); i++) {
+        cout << left << setw(15) << brandVector[i].first
+             << setw(10) << brandVector[i].second << endl;
+    }
+}
+
+
+///4.Write a function that displays a subset of the data rows based on a user input. For example, this function could show all of the movies of a particular genre entered by the user and passed into the function as an argument.
+
+
+
+void displayCarsByBrand(const vector<Cars> &cars, const string &brand) {
+    bool found = false;  // Track if any car matches the input
+
+    cout << "\n[ Cars of Brand: " << brand << "]\n";
+    cout << left << setw(20) << "ID"
+         << setw(15) << "Brand"
+         << setw(15) << "Model"
+         << setw(6)  << "Year"
+         << setw(12) << "Price"
+         << setw(12) << "Horsepower"
+         << setw(12) << "Engine Size" << endl;
+    cout << "--------------------------------------------------------------------------------------\n";
+
+
+    for (size_t i = 0; i < cars.size(); i++) {
+        if (cars[i].brand == brand) {
+            cout << left << setw(20) << cars[i].id
+                 << setw(15) << cars[i].brand
+                 << setw(15) << cars[i].model
+                 << setw(6)  << cars[i].year
+                 << setw(12) << cars[i].price
+                 << setw(12) << cars[i].horsePower
+                 << setw(12) << cars[i].engineSize << endl;
+            found = true;  // At least one car was found
+        }
+    }
+
+    if (!found) {
+        cout << "No cars found for the brand: " << brand << endl;
+    }
+}
+
+
+
+///5.Write a function that will find the highest, lowest and average of a discrete numerical field (Integer).  The function should return the average value (as an int) and provide (“return”) a copy of the structs with the highest and lowest values. For example, if you chose movie data then this function could provide the highest rated and lowest rated movie, and also return the average rating of all movies.
+
+
+struct HorsePowerStats {
+    int averageHP;
+    Cars highestCar;
+    Cars lowestCar;
+};
+
+
+HorsePowerStats findHorsePowerStats(const vector<Cars> &cars) {
+    if (cars.empty()) {
+        cerr << "Error: No cars in the dataset.\n";
+        return {0, Cars(), Cars()};
+    }
+
+    int totalHorsepower = 0;
+    Cars highestCar = cars[0];
+    Cars lowestCar = cars[0];
+
+
+    for (size_t i = 0; i < cars.size(); i++) {
+        totalHorsepower += cars[i].horsePower;
+
+        if (cars[i].horsePower > highestCar.horsePower) {
+            highestCar = cars[i];
+        }
+
+        if (cars[i].horsePower < lowestCar.horsePower) {
+            lowestCar = cars[i];
+        }
+    }
+
+    int averageHorsepower = totalHorsepower / cars.size();
+
+    return {averageHorsepower, highestCar, lowestCar};
+}
+
+
+void displayHorsePowerStats(const HorsePowerStats &stats) {
+    cout << "\n[Horsepower Stats]\n";
+    cout << "Average Horsepower: " << stats.averageHP << " HP\n";
+
+    cout << "\n Car with Highest Horsepower:\n";
+    cout << left << setw(20) << "ID"
+         << setw(15) << "Brand"
+         << setw(15) << "Model"
+         << setw(6)  << "Year"
+         << setw(12) << "Price"
+         << setw(12) << "Horsepower"
+         << setw(12) << "Engine Size" << endl;
+    cout << "--------------------------------------------------------------------------------------\n";
+    cout << left << setw(20) << stats.highestCar.id
+         << setw(15) << stats.highestCar.brand
+         << setw(15) << stats.highestCar.model
+         << setw(6)  << stats.highestCar.year
+         << setw(12) << stats.highestCar.price
+         << setw(12) << stats.highestCar.horsePower
+         << setw(12) << stats.highestCar.engineSize << endl;
+
+    cout << "\nCar with Lowest Horsepower:\n";
+    cout << left << setw(20) << stats.lowestCar.id
+         << setw(15) << stats.lowestCar.brand
+         << setw(15) << stats.lowestCar.model
+         << setw(6)  << stats.lowestCar.year
+         << setw(12) << stats.lowestCar.price
+         << setw(12) << stats.lowestCar.horsePower
+         << setw(12) << stats.lowestCar.engineSize << endl;
+}
+
+
 
 
 
 
 int main() {
-    vector<Cars> cars;
 
-//1
+
+//1.
+
+    vector<Cars> cars;
     loadData("Cars_c++.csv", cars);
     //displayCars(cars);
 
 //2.
     string searchBrand;
-    cout << "Enter brand to search: ";
-    cin >> searchBrand;
+    //cout << "Enter brand to search: ";
+    //cin >> searchBrand;
 
     int index = searchCarByBrand(cars, searchBrand);
 
-    displaySearchResult(cars, index);
+    //displaySearchResult(cars, index);
+
+//3.
+    unordered_map<string, int> brandCount = countByBrand(cars);
+    //displayBrandCount(brandCount);
+
+
+
+//4.
+    string searchBrand2;
+    //cout << "Enter brand to filter: ";
+    //cin >> searchBrand2;
+
+    //displayCarsByBrand(cars, searchBrand2);
+
+
+//5.
+
+    HorsePowerStats stats = findHorsePowerStats(cars);
+
+    displayHorsePowerStats(stats);
+
+
+
 
     return 0;
 }
