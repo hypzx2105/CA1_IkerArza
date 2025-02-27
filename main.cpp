@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iomanip>
 #include <unordered_map>
+#include <algorithm>
 
 
 using namespace std;
@@ -162,7 +163,7 @@ void displayBrandCount(const unordered_map<string, int> &brandCount) {
 
 
 void displayCarsByBrand(const vector<Cars> &cars, const string &brand) {
-    bool found = false;  // Track if any car matches the input
+    bool found = false;
 
     cout << "\n[ Cars of Brand: " << brand << "]\n";
     cout << left << setw(20) << "ID"
@@ -184,7 +185,7 @@ void displayCarsByBrand(const vector<Cars> &cars, const string &brand) {
                  << setw(12) << cars[i].price
                  << setw(12) << cars[i].horsePower
                  << setw(12) << cars[i].engineSize << endl;
-            found = true;  // At least one car was found
+            found = true;
         }
     }
 
@@ -265,51 +266,131 @@ void displayHorsePowerStats(const HorsePowerStats &stats) {
          << setw(12) << stats.lowestCar.engineSize << endl;
 }
 
+///6.Write a function that will search through the data and return a list of all items that match or partially match a given text input. For example, all movies that contain the text “The” in the title. Iterators must be used for this function.
 
+
+void searchCarsByText(const vector<Cars> &cars, const string &searchText) {
+    vector<Cars> matchingCars;
+
+
+    for (size_t i = 0; i < cars.size(); i++) {
+
+        if (cars[i].brand.find(searchText) != string::npos || cars[i].model.find(searchText) != string::npos) {
+            matchingCars.push_back(cars[i]);
+        }
+    }
+
+
+    cout << "\n[ Search Results for: \"" << searchText << "\"]\n";
+    if (matchingCars.empty()) {
+        cout << "No matching cars found.\n";
+        return;
+    }
+
+    cout << left << setw(20) << "ID"
+         << setw(15) << "Brand"
+         << setw(15) << "Model"
+         << setw(6)  << "Year"
+         << setw(12) << "Price"
+         << setw(12) << "Horsepower"
+         << setw(12) << "Engine Size" << endl;
+    cout << "--------------------------------------------------------------------------------------\n";
+
+
+    for (size_t i = 0; i < matchingCars.size(); i++) {
+        cout << left << setw(20) << matchingCars[i].id
+             << setw(15) << matchingCars[i].brand
+             << setw(15) << matchingCars[i].model
+             << setw(6)  << matchingCars[i].year
+             << setw(12) << matchingCars[i].price
+             << setw(12) << matchingCars[i].horsePower
+             << setw(12) << matchingCars[i].engineSize << endl;
+    }
+}
+
+
+///7.Write a function that will display all of the data in descending order of a selected floating point field. For example, using the gross takings of a movie in Millions (Floating point number), you could display them in descending order of gross takings.
+
+void sortCarsByEngineSize(vector<Cars> &cars) {
+    sort(cars.begin(), cars.end(), [](const Cars &a, const Cars &b) {
+        return a.engineSize > b.engineSize;
+    });
+}
+
+
+void displaySortedCars(const vector<Cars> &cars) {
+    cout << "\n[Cars Sorted by Engine Size (Descending)]\n";
+    cout << left << setw(20) << "ID"
+         << setw(15) << "Brand"
+         << setw(15) << "Model"
+         << setw(6)  << "Year"
+         << setw(12) << "Price"
+         << setw(12) << "Horsepower"
+         << setw(12) << "Engine Size" << endl;
+    cout << "--------------------------------------------------------------------------------------\n";
+
+    for (size_t i = 0; i < cars.size(); i++) {
+        cout << left << setw(20) << cars[i].id
+             << setw(15) << cars[i].brand
+             << setw(15) << cars[i].model
+             << setw(6)  << cars[i].year
+             << setw(12) << fixed << setprecision(2) << cars[i].price
+             << setw(12) << cars[i].horsePower
+             << setw(12) << fixed << setprecision(1) << cars[i].engineSize << endl;
+    }
+}
+
+void menu(vector<Cars> &cars) {
+    int choice;
+    string input;
+
+    do {
+        cout << "\n========== Car Database Menu ==========\n";
+        cout << "1. Display all cars\n";
+        cout << "2. Search car by brand\n";
+        cout << "3. Show count of cars by brand\n";
+        cout << "4. Filter cars by brand\n";
+        cout << "5. Show cars sorted by engine size\n";
+        cout << "6. Exit\n";
+        cout << "Choose an option: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                displayCars(cars);
+            break;
+            case 2:
+                cout << "Enter brand to search: ";
+            cin >> input;
+            displaySearchResult(cars, searchCarByBrand(cars, input));
+            break;
+            case 3:
+                displayBrandCount(countByBrand(cars));
+            break;
+            case 4:
+                cout << "Enter brand to filter: ";
+            cin >> input;
+            displayCarsByBrand(cars, input);
+            break;
+            case 5:
+                displaySortedCars(cars);
+            break;
+            case 6:
+                cout << "Exiting program...\n";
+            return;
+            default:
+                cout << "Invalid option! Try again.\n";
+        }
+    } while (choice != 6);
+}
 
 
 
 
 int main() {
 
-
-//1.
-
     vector<Cars> cars;
     loadData("Cars_c++.csv", cars);
-    //displayCars(cars);
-
-//2.
-    string searchBrand;
-    //cout << "Enter brand to search: ";
-    //cin >> searchBrand;
-
-    int index = searchCarByBrand(cars, searchBrand);
-
-    //displaySearchResult(cars, index);
-
-//3.
-    unordered_map<string, int> brandCount = countByBrand(cars);
-    //displayBrandCount(brandCount);
-
-
-
-//4.
-    string searchBrand2;
-    //cout << "Enter brand to filter: ";
-    //cin >> searchBrand2;
-
-    //displayCarsByBrand(cars, searchBrand2);
-
-
-//5.
-
-    HorsePowerStats stats = findHorsePowerStats(cars);
-
-    displayHorsePowerStats(stats);
-
-
-
-
+    menu(cars);
     return 0;
 }
